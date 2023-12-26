@@ -1,0 +1,1 @@
+https://github.com/curl/curl/releases/tag/curl-8_4_0
