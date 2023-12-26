@@ -1,0 +1,1 @@
+https://github.com/Kitware/CMake/releases/tag/v3.27.7
