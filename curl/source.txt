@@ -1,1 +1,1 @@
-https://github.com/curl/curl/releases/tag/curl-8_4_0
+https://github.com/curl/curl/releases/tag/curl-8_8_0
