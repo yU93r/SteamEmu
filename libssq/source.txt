@@ -1,1 +1,0 @@
-https://github.com/BinaryAlien/libssq/releases/tag/v3.0.0
