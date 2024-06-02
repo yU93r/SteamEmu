@@ -13,14 +13,34 @@ if not defined file (
 pushd "%~dp0"
 set "OPENSSL_CONF=%cd%\openssl.cnf"
 
-call :gen_rnd rr
-set "pvt_file=%cd%\prvt-%rr%.pem"
+set "filename=%random%"
+for %%A in ("%file%") do (
+  set "filename=%random%-%%~nxA"
+)
 
+:re_pvt
 call :gen_rnd rr
-set "cer_file=%cd%\cert-%rr%.pem"
+set "pvt_file=%cd%\prvt-%rr%-%filename%.pem"
+:: parallel build can generate same rand number
+if exist "%pvt_file%" (
+  goto :re_pvt
+)
 
+:re_cer
 call :gen_rnd rr
-set "pfx_file=%cd%\cfx-%rr%.pfx"
+set "cer_file=%cd%\cert-%rr%-%filename%.pem"
+:: parallel build can generate same rand number
+if exist "%cer_file%" (
+  goto :re_cer
+)
+
+:re_pfx
+call :gen_rnd rr
+set "pfx_file=%cd%\cfx-%rr%-%filename%.pfx"
+:: parallel build can generate same rand number
+if exist "%pfx_file%" (
+  goto :re_pfx
+)
 
 set "openssl_exe=%cd%\openssl.exe"
 set "signtool_exe=%cd%\signtool.exe"
@@ -73,7 +93,7 @@ exit /b %exit%
 :: 1: (ref) out random number
 :gen_rnd
   setlocal enabledelayedexpansion 
-  for /l %%A in (1, 1, 100) do (
+  for /l %%A in (1, 1, 10) do (
     set "_r=!random!"
   )
 endlocal & (
