@@ -1414,7 +1414,7 @@ void Steam_Overlay::render_main_window()
     char tmp[TRANSLATION_BUFFER_SIZE]{};
     snprintf(tmp, sizeof(tmp), translationRenderer[current_language], (_renderer == nullptr ? "Unknown" : _renderer->GetLibraryName().c_str()));
     std::string windowTitle{};
-    windowTitle.append(translationSteamOverlay[current_language]).append( (").append(tmp).append(")");
+    windowTitle.append(translationSteamOverlay[current_language]).append(" (").append(tmp).append(")");
 
     bool show = true;
 
