@@ -1420,23 +1420,15 @@ void Steam_Overlay::render_main_window()
     ImGui::SetNextWindowSize({ io.DisplaySize.x, io.DisplaySize.y });
     if (ImGui::Begin(windowTitle.c_str(), &show,
             ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse |
-            ImGuiWindowFlags_NoBringToFrontOnFocus)) {
-        if (show_user_info) {
-            ImGui::LabelText("##playinglabel", translationUserPlaying[current_language],
-                settings->get_local_name(),
-                settings->get_local_steam_id().ConvertToUint64(),
-                settings->get_local_game_id().AppID());
-        }
-
-        ImGui::Spacing();
+            ImGuiWindowFlags_NoBringToFrontOnFocus)) 
+    {
+        ImGui::LabelText("##playinglabel", translationUserPlaying[current_language],
+            settings->get_local_name(),
+            settings->get_local_steam_id().ConvertToUint64(),
+            settings->get_local_game_id().AppID());
         
         ImGui::SameLine();
-        // user clicked on "toggle user info"
-        if (ImGui::Button(translationToggleUserInfo[current_language])) {
-            show_user_info = !show_user_info;
-        }
-
-        ImGui::SameLine();
+        ImGui::Spacing();
         // user clicked on "show achievements"
         if (ImGui::Button(translationShowAchievements[current_language])) {
             show_achievements = !show_achievements;
