@@ -250,7 +250,6 @@ void Steam_Overlay::create_fonts()
     }
     for (int i = 0; i < TRANSLATION_NUMBER_OF_LANGUAGES; i++) {
         font_builder.AddText(translationChat[i]);
-        font_builder.AddText(translationCopyId[i]);
         font_builder.AddText(translationTestAchievement[i]);
         font_builder.AddText(translationInvite[i]);
         font_builder.AddText(translationInviteAll[i]);
@@ -727,12 +726,6 @@ void Steam_Overlay::build_friend_context_menu(Friend const& frd, friend_window_s
         if (ImGui::Button(translationChat[current_language])) {
             close_popup = true;
             state.window_state |= window_state_show;
-        }
-        // user clicked on "copy id" on a friend
-        if (ImGui::Button(translationCopyId[current_language])) {
-            close_popup = true;
-            auto friend_id_str = std::to_string(frd.id());
-            ImGui::SetClipboardText(friend_id_str.c_str());
         }
         // If we have the same appid, activate the invite/join buttons
         if (settings->get_local_game_id().AppID() == frd.appid()) {
@@ -1453,13 +1446,6 @@ void Steam_Overlay::render_main_window()
         // user clicked on "test achievement"
         if (ImGui::Button(translationTestAchievement[current_language])) {
             show_test_achievement();
-        }
-
-        ImGui::SameLine();
-        // user clicked on "copy id" on themselves
-        if (ImGui::Button(translationCopyId[current_language])) {
-            auto friend_id_str = std::to_string(settings->get_local_steam_id().ConvertToUint64());
-            ImGui::SetClipboardText(friend_id_str.c_str());
         }
 
         ImGui::SameLine();
