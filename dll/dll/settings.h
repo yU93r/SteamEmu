@@ -120,7 +120,7 @@ struct Overlay_Appearance {
     
     float icon_size = 64.0f;
 
-    float font_glyph_extra_spacing_x = 1.0f;
+    float font_glyph_extra_spacing_x = 0.0f;
     float font_glyph_extra_spacing_y = 0.0f;
 
     float notification_r = 0.16f;
@@ -128,9 +128,9 @@ struct Overlay_Appearance {
     float notification_b = 0.48f;
     float notification_a = 1.0f;
 
-    float notification_rounding = 10.0f; // corners roundness for all notifications
-    float notification_margin_x = 5.0f; // horizontal margin
-    float notification_margin_y = 5.0f; // vertical margin
+    float notification_rounding = 0.0f; // corners roundness for all notifications
+    float notification_margin_x = 0.0f; // horizontal margin
+    float notification_margin_y = 0.0f; // vertical margin
     
     uint32 notification_animation = 350; // sliding animation duration (millisec)
     uint32 notification_duration_progress = 6000; // achievement progress indication duration (millisec)
