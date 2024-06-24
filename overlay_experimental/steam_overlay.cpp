@@ -249,7 +249,6 @@ void Steam_Overlay::create_fonts()
         font_builder.AddText(ach.description.c_str());
     }
     for (int i = 0; i < TRANSLATION_NUMBER_OF_LANGUAGES; i++) {
-        font_builder.AddText(translationTitle[i]);
         font_builder.AddText(translationChat[i]);
         font_builder.AddText(translationCopyId[i]);
         font_builder.AddText(translationTestAchievement[i]);
@@ -260,6 +259,7 @@ void Steam_Overlay::create_fonts()
         font_builder.AddText(translationAccept[i]);
         font_builder.AddText(translationRefuse[i]);
         font_builder.AddText(translationSend[i]);
+        font_builder.AddText(translationSteamOverlay[i]);
         font_builder.AddText(translationUserPlaying[i]);
         font_builder.AddText(translationRenderer[i]);
         font_builder.AddText(translationShowAchievements[i]);
@@ -1414,7 +1414,7 @@ void Steam_Overlay::render_main_window()
     char tmp[TRANSLATION_BUFFER_SIZE]{};
     snprintf(tmp, sizeof(tmp), translationRenderer[current_language], (_renderer == nullptr ? "Unknown" : _renderer->GetLibraryName().c_str()));
     std::string windowTitle{};
-    windowTitle.append(translationTitle[current_language]).append( (").append(tmp).append(")");
+    windowTitle.append(translationSteamOverlay[current_language]).append( (").append(tmp).append(")");
 
     bool show = true;
 
