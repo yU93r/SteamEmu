@@ -249,6 +249,7 @@ void Steam_Overlay::create_fonts()
         font_builder.AddText(ach.description.c_str());
     }
     for (int i = 0; i < TRANSLATION_NUMBER_OF_LANGUAGES; i++) {
+        font_builder.AddText(translationTitle[i]);
         font_builder.AddText(translationChat[i]);
         font_builder.AddText(translationCopyId[i]);
         font_builder.AddText(translationTestAchievement[i]);
@@ -1413,9 +1414,7 @@ void Steam_Overlay::render_main_window()
     char tmp[TRANSLATION_BUFFER_SIZE]{};
     snprintf(tmp, sizeof(tmp), translationRenderer[current_language], (_renderer == nullptr ? "Unknown" : _renderer->GetLibraryName().c_str()));
     std::string windowTitle{};
-    // Note: don't translate this, project and author names are nouns, they must be kept intact for proper referral
-    // think of it as translating "Protobuf - Google"
-    windowTitle.append("Ingame Overlay project - Nemirtingas (").append(tmp).append(")");
+    windowTitle.append(translationTitle[current_language]).append( (").append(tmp).append(")");
 
     bool show = true;
 
