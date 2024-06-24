@@ -84,7 +84,7 @@ const char translationSteamOverlay[TRANSLATION_NUMBER_OF_LANGUAGES][TRANSLATION_
   u8"โอเวอร์เลย์ Steam",
 
 	// 26 - Turkish
-  u8"Steam Oyun İçi Arayüzü",
+  u8"Steam Öykünücüsü Oyun İçi Arayüzü",
 
 	// 27 - Ukrainian
   u8"Оверлей Steam",
