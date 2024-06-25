@@ -104,8 +104,8 @@ DLCUnlockall=0
 ###
 ### Bitmap Icons for Achievements
 ###
-#halloween_8 Achieved=steam_settings\\img\\halloween_8.jpg
-#halloween_8 Unachieved=steam_settings\\img\\unachieved\\halloween_8.jpg
+#halloween_8 Achieved=steam_settings\\achievement_images\\halloween_8.jpg
+#halloween_8 Unachieved=steam_settings\\achievement_images\\unachieved\\halloween_8.jpg
 {cdx_ach_list}
 ###
 
@@ -129,19 +129,19 @@ def generate_cdx_ini(
     for ach in achs:
         icon = ach.get("icon", None)
         if icon:
-            icon = f"steam_settings\\img\\{icon}"
+            icon = f"steam_settings\\achievement_images\\{icon}"
         else:
-            icon = 'steam_settings\\img\\steam_default_icon_unlocked.jpg'
+            icon = 'steam_settings\\achievement_images\\steam_default_icon_unlocked.jpg'
 
         icon_gray = ach.get("icon_gray", None)
         if icon_gray:
-            icon_gray = f"steam_settings\\img\\{icon_gray}"
+            icon_gray = f"steam_settings\\achievement_images\\{icon_gray}"
         else:
-            icon_gray = 'steam_settings\\img\\steam_default_icon_locked.jpg'
+            icon_gray = 'steam_settings\\achievement_images\\steam_default_icon_locked.jpg'
 
         icongray = ach.get("icongray", None)
         if icongray:
-            icon_gray = f"steam_settings\\img\\{icongray}"
+            icon_gray = f"steam_settings\\achievement_images\\{icongray}"
 
         achs_list.append(f'{ach["name"]} Achieved={icon}') # unlocked
         achs_list.append(f'{ach["name"]} Unachieved={icon_gray}') # locked
