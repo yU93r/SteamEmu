@@ -20,8 +20,6 @@
 
 // translation
 #include "overlay/steam_overlay_translations.h"
-// fonts
-#include "fonts/unifont.hpp"
 // builtin audio
 #include "overlay/notification.h"
 
@@ -295,8 +293,7 @@ void Steam_Overlay::create_fonts()
         font_cfg.MergeMode = true; // merge next fonts into the first one, as if they were all just 1 font file
     }
 
-    // note: base85 compressed arrays caused a compiler heap allocation error, regular compression is more guaranteed
-    ImFont *font = fonts_atlas.AddFontFromMemoryCompressedTTF(unifont_compressed_data, unifont_compressed_size, font_size, &font_cfg);
+    ImFont *font = fonts_atlas.AddFontFromFileTTF("C:\\Windows\\Fonts\\micross.ttf", font_size, &font_cfg);
     font_notif = font_default = font;
     
     bool res = fonts_atlas.Build();
