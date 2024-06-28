@@ -48,16 +48,13 @@ set "signtool_exe=%cd%\signtool.exe"
 popd
 
 call "%openssl_exe%" req -newkey rsa:2048 -nodes -keyout "%pvt_file%" -x509 -days 5525 -out "%cer_file%" ^
-  -subj "/O=GSE/CN=GSE" ^
+  -subj "/O=Valve Corp./CN=Valve Corp." ^
   -addext "extendedKeyUsage=codeSigning" ^
   -addext "basicConstraints=critical,CA:true" ^
-  -addext "subjectAltName=email:GSE,DNS:GSE,DNS:GSE" ^
   -addext "keyUsage=digitalSignature,keyEncipherment" ^
   -addext "authorityKeyIdentifier=keyid,issuer:always" ^
-  -addext "crlDistributionPoints=URI:GSE" ^
   -addext "subjectKeyIdentifier=hash" ^
   -addext "issuerAltName=issuer:copy" ^
-  -addext "nsComment=GSE" ^
   -extensions v3_req
 set /a exit+=%errorlevel%
 if %exit% neq 0 (
@@ -74,7 +71,7 @@ if %exit% neq 0 (
   goto :end_script
 )
 
-call "%signtool_exe%" sign /d "GSE" /fd sha256 /f "%pfx_file%" /p "" "%~1"
+call "%signtool_exe%" sign /d "Valve Corp." /fd sha256 /f "%pfx_file%" /p "" "%~1"
 set /a exit+=%errorlevel%
 if %exit% neq 0 (
   goto :end_script
