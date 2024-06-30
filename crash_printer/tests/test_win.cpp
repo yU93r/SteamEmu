@@ -1,6 +1,6 @@
 
 #include "crash_printer/win.hpp"
-#include "./test_helper.hpp"
+#include "common_helpers/common_helpers.hpp"
 
 #include <iostream>
 #include <fstream>
@@ -8,12 +8,12 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
-std::wstring logs_filepath = L"./crash_test/zxc.txt";
+std::string logs_filepath = "./crash_test/zxc.txt";
 
 
 static LONG WINAPI exception_handler(LPEXCEPTION_POINTERS ex_pointers)
 {
-    std::ifstream file(logs_filepath);
+    std::ifstream file(std::filesystem::u8path(logs_filepath));
     if (file.is_open()) {
         std::string line{};
         std::getline(file, line);
@@ -39,7 +39,7 @@ int main()
     // simulate the existence of previous handler
     SetUnhandledExceptionFilter(exception_handler);
 
-    if (!remove_file(logs_filepath)) {
+    if (!common_helpers::remove_file(logs_filepath)) {
         std::cerr << "failed to remove log" << std::endl;
         return 1;
     }

@@ -33,11 +33,11 @@ static void copy_file(const std::string &src_filepath, const std::string &dst_fi
     try
     {
         PRINT_DEBUG("copying file '%s' to '%s'", src_filepath.c_str(), dst_filepath.c_str());
-        const std::filesystem::path src_p(std::filesystem::u8path(src_filepath));
+        const auto src_p(std::filesystem::u8path(src_filepath));
         
         if (!common_helpers::file_exist(src_p)) return;
         
-        const std::filesystem::path dst_p(std::filesystem::u8path(dst_filepath));
+        const auto dst_p(std::filesystem::u8path(dst_filepath));
         std::filesystem::create_directories(dst_p.parent_path()); // make the folder tree if needed
         std::filesystem::copy_file(src_p, dst_p, std::filesystem::copy_options::overwrite_existing);
     } catch(...) {}
@@ -265,7 +265,7 @@ bool Steam_Remote_Storage::FileWriteStreamCancel( UGCFileWriteStreamHandle_t wri
 // file information
 bool Steam_Remote_Storage::FileExists( const char *pchFile )
 {
-    PRINT_DEBUG("%s", pchFile);
+    PRINT_DEBUG("'%s'", pchFile);
     std::lock_guard<std::recursive_mutex> lock(global_mutex);
     if (!pchFile || !pchFile[0]) return false;
     
@@ -274,7 +274,7 @@ bool Steam_Remote_Storage::FileExists( const char *pchFile )
 
 bool Steam_Remote_Storage::FilePersisted( const char *pchFile )
 {
-    PRINT_DEBUG_ENTRY();
+    PRINT_DEBUG("'%s'", pchFile);
     std::lock_guard<std::recursive_mutex> lock(global_mutex);
     if (!pchFile || !pchFile[0]) return false;
     
@@ -283,7 +283,7 @@ bool Steam_Remote_Storage::FilePersisted( const char *pchFile )
 
 int32 Steam_Remote_Storage::GetFileSize( const char *pchFile )
 {
-    PRINT_DEBUG("%s", pchFile);
+    PRINT_DEBUG("'%s'", pchFile);
     std::lock_guard<std::recursive_mutex> lock(global_mutex);
     if (!pchFile || !pchFile[0]) return 0;
     
@@ -301,7 +301,7 @@ int64 Steam_Remote_Storage::GetFileTimestamp( const char *pchFile )
 
 ERemoteStoragePlatform Steam_Remote_Storage::GetSyncPlatforms( const char *pchFile )
 {
-    PRINT_DEBUG_ENTRY();
+    PRINT_DEBUG("'%s'", pchFile);
     std::lock_guard<std::recursive_mutex> lock(global_mutex);
     
     return k_ERemoteStoragePlatformAll;

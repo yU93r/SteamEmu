@@ -643,11 +643,11 @@ static std::set<std::string> parse_supported_languages(class Local_Storage *loca
     if (input.is_open()) {
         common_helpers::consume_bom(input);
         for( std::string line; getline( input, line ); ) {
-            if (!line.empty() && line[line.length()-1] == '\n') {
+            if (!line.empty() && line.back() == '\n') {
                 line.pop_back();
             }
 
-            if (!line.empty() && line[line.length()-1] == '\r') {
+            if (!line.empty() && line.back() == '\r') {
                 line.pop_back();
             }
 
@@ -719,7 +719,7 @@ static void parse_app_paths(class Settings *settings_client, Settings *settings_
         auto val_ptr = ini.GetValue("app::paths", id.pItem);
         if (!val_ptr || !val_ptr[0]) continue;
 
-        AppId_t appid = std::stol(id.pItem);
+        AppId_t appid = (AppId_t)std::stoul(id.pItem);
         std::string rel_path(val_ptr);
         std::string path = canonical_path(program_path + rel_path);
 
@@ -1146,12 +1146,12 @@ static void parse_crash_printer_location()
 {
     std::string line(common_helpers::string_strip(ini.GetValue("main::general", "crash_printer_location", "")));
     if (line.size()) {
-        auto crash_path = utf8_decode(common_helpers::to_absolute(line, get_full_program_path()));
+        auto crash_path = common_helpers::to_absolute(line, get_full_program_path());
         if (crash_path.size()) {
             if (crash_printer::init(crash_path)) {
-                PRINT_DEBUG("Unhandled crashes will be saved to '%s'", utf8_encode(crash_path).c_str());
+                PRINT_DEBUG("Unhandled crashes will be saved to '%s'", crash_path.c_str());
             } else {
-                PRINT_DEBUG("Failed to setup unhandled crash printer with path: '%s'", utf8_encode(crash_path).c_str());
+                PRINT_DEBUG("Failed to setup unhandled crash printer with path: '%s'", crash_path.c_str());
             }
         }
     }

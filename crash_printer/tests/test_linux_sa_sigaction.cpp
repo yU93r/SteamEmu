@@ -1,7 +1,6 @@
 
 #include "crash_printer/linux.hpp"
-#include "./test_helper.hpp"
-
+#include "common_helpers/common_helpers.hpp"
 
 #include <iostream>
 #include <fstream>
@@ -16,7 +15,7 @@ std::string logs_filepath = "./crash_test/asd.txt";
 // sa_handler handler for illegal instruction (SIGILL)
 void exception_handler_SIGILL(int signal, siginfo_t *info, void *context)
 {
-    std::ifstream file(logs_filepath);
+    std::ifstream file(std::filesystem::u8path(logs_filepath));
     if (file.is_open()) {
         std::string line{};
         std::getline(file, line);
@@ -42,7 +41,7 @@ int main()
     sigemptyset(&sa_SIGSEGV_prev.sa_mask); // all signals unblocked
     sigaction(SIGSEGV, &sa_SIGSEGV_prev, nullptr);
 
-    if (!remove_file(logs_filepath)) {
+    if (!common_helpers::remove_file(logs_filepath)) {
         std::cerr << "failed to remove log" << std::endl;
         return 1;
     }

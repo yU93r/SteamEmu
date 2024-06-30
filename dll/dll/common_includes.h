@@ -19,27 +19,7 @@
 #define __INCLUDED_COMMON_INCLUDES__
 
 // OS detection
-#if defined(WIN64) || defined(_WIN64) || defined(__MINGW64__)
-    #define __WINDOWS_64__
-#elif defined(WIN32) || defined(_WIN32) || defined(__MINGW32__)
-    #define __WINDOWS_32__
-#endif
-
-#if defined(__WINDOWS_32__) || defined(__WINDOWS_64__)
-    #define __WINDOWS__
-#endif
-
-#if defined(__linux__) || defined(linux)
-    #if defined(__x86_64__)
-        #define __LINUX_64__
-    #else
-        #define __LINUX_32__
-    #endif
-#endif
-
-#if defined(__LINUX_32__) || defined(__LINUX_64__)
-    #define __LINUX__
-#endif
+#include "common_helpers/os_detector.h"
 
 #if defined(__WINDOWS__)
     #define STEAM_WIN32
@@ -78,6 +58,11 @@
 #include <filesystem>
 #include <optional>
 
+// common includes
+#include "common_helpers/common_helpers.hpp"
+#include "json/json.hpp"
+#include "utfcpp/utf8.h"
+
 // OS specific includes + definitions
 #if defined(__WINDOWS__)
     #include <winsock2.h>
@@ -109,21 +94,13 @@
 // Convert a wide Unicode string to an UTF8 string
 static inline std::string utf8_encode(const std::wstring &wstr)
 {
-    if( wstr.empty() ) return std::string();
-    int size_needed = WideCharToMultiByte(CP_UTF8, 0, &wstr[0], (int)wstr.size(), NULL, 0, NULL, NULL);
-    std::string strTo( size_needed, 0 );
-    WideCharToMultiByte                  (CP_UTF8, 0, &wstr[0], (int)wstr.size(), &strTo[0], size_needed, NULL, NULL);
-    return strTo;
+    return common_helpers::to_str(wstr);
 }
 
 // Convert UTF8 string to a wide Unicode String
 static inline std::wstring utf8_decode(const std::string &str)
 {
-    if( str.empty() ) return std::wstring();
-    int size_needed = MultiByteToWideChar(CP_UTF8, 0, &str[0], (int)str.size(), NULL, 0);
-    std::wstring wstrTo( size_needed, 0 );
-    MultiByteToWideChar                  (CP_UTF8, 0, &str[0], (int)str.size(), &wstrTo[0], size_needed);
-    return wstrTo;
+    return common_helpers::to_wstr(str);
 }
 
 static inline void reset_LastError()
@@ -168,12 +145,7 @@ static inline void reset_LastError()
 #endif
 
 // Other libs includes
-#include "json/json.hpp"
-#include "utfcpp/utf8.h"
 #include "gamepad/gamepad.h"
-
-// common includes
-#include "common_helpers/common_helpers.hpp"
 
 // Steamsdk includes
 #include "steam/steam_api.h"
@@ -191,6 +163,7 @@ static inline void reset_LastError()
 
 // PRINT_DEBUG definition
 #ifndef EMU_RELEASE_BUILD
+    #include "dbg_log/dbg_log.hpp"
     // we need this for printf specifiers for intptr_t such as PRIdPTR
     #include <inttypes.h>
     
@@ -209,21 +182,11 @@ static inline void reset_LastError()
         #define PRINT_DEBUG_CLEANUP() (void)0
     #endif
 
-    //#define PRINT_DEBUG(...) fprintf(stdout, __VA_ARGS__)
-    extern const std::string dbg_log_file;
-    extern const std::chrono::time_point<std::chrono::high_resolution_clock> startup_counter;
+    extern dbg_log dbg_logger;
 
-    #define PRINT_DEBUG(a, ...) do {                                                                                                                     \
-        auto __prnt_dbg_ctr = std::chrono::high_resolution_clock::now();                                                                                 \
-        auto __prnt_dbg_duration = __prnt_dbg_ctr - startup_counter;                                                                                     \
-        auto __prnt_dbg_micro = std::chrono::duration_cast<std::chrono::duration<unsigned long long, std::micro>>(__prnt_dbg_duration);                  \
-        auto __prnt_dbg_ms = std::chrono::duration_cast<std::chrono::duration<unsigned long long, std::milli>>(__prnt_dbg_duration);                     \
-        auto __prnt_dbg_f = fopen(dbg_log_file.c_str(), "a");                                                                                            \
-        if (!__prnt_dbg_f) break;                                                                                                                        \
-        fprintf(__prnt_dbg_f, "[%llu ms, %lld us] [tid %lld] %s " a "\n",                                                                                \
-            __prnt_dbg_ms.count(), __prnt_dbg_micro.count(), PRINT_DEBUG_TID(), EMU_FUNC_NAME, ##__VA_ARGS__);                                           \
-        fclose(__prnt_dbg_f);                                                                                                                            \
-        PRINT_DEBUG_CLEANUP();                                                                                                                           \
+    #define PRINT_DEBUG(a, ...) do {                                                                \
+        dbg_logger.write("[tid %lld] %s " a, PRINT_DEBUG_TID(), EMU_FUNC_NAME, ##__VA_ARGS__);      \
+        PRINT_DEBUG_CLEANUP();                                                                      \
     } while (0)
 
 #else // EMU_RELEASE_BUILD
