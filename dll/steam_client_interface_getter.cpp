@@ -18,6 +18,19 @@
 #include "dll/steam_client.h"
 
 
+// retrieves the ISteamTimeline interface associated with the handle
+ISteamTimeline *Steam_Client::GetISteamTimeline( HSteamUser hSteamUser, HSteamPipe hSteamPipe, const char *pchVersion )
+{
+    PRINT_DEBUG("%s", pchVersion);
+    if (!steam_pipes.count(hSteamPipe) || !hSteamUser) return nullptr;
+
+    if (strcmp(pchVersion, STEAMTIMELINE_INTERFACE_VERSION) == 0) {
+        return reinterpret_cast<ISteamTimeline *>(static_cast<ISteamTimeline *>(steam_timeline));
+    }
+
+    report_missing_impl_and_exit(pchVersion, EMU_FUNC_NAME);
+}
+
 // retrieves the ISteamGameStats interface associated with the handle
 ISteamGameStats *Steam_Client::GetISteamGameStats( HSteamUser hSteamUser, HSteamPipe hSteamPipe, const char *pchVersion )
 {
@@ -700,6 +713,8 @@ ISteamUGC *Steam_Client::GetISteamUGC( HSteamUser hSteamUser, HSteamPipe hSteamP
         return reinterpret_cast<ISteamUGC *>(static_cast<ISteamUGC016 *>(steam_ugc_temp));
     } else if (strcmp(pchVersion, "STEAMUGC_INTERFACE_VERSION017") == 0) {
         return reinterpret_cast<ISteamUGC *>(static_cast<ISteamUGC017 *>(steam_ugc_temp));
+    } else if (strcmp(pchVersion, "STEAMUGC_INTERFACE_VERSION018") == 0) {
+        return reinterpret_cast<ISteamUGC *>(static_cast<ISteamUGC018 *>(steam_ugc_temp));
     } else if (strcmp(pchVersion, STEAMUGC_INTERFACE_VERSION) == 0) {
         return reinterpret_cast<ISteamUGC *>(static_cast<ISteamUGC *>(steam_ugc_temp));
     }
@@ -799,6 +814,9 @@ ISteamVideo *Steam_Client::GetISteamVideo( HSteamUser hSteamuser, HSteamPipe hSt
     
     if (strcmp(pchVersion, "STEAMVIDEO_INTERFACE_V001") == 0) {
         return reinterpret_cast<ISteamVideo *>(static_cast<ISteamVideo001 *>(steam_video));
+    }
+    if (strcmp(pchVersion, "STEAMVIDEO_INTERFACE_V002") == 0) {
+        return reinterpret_cast<ISteamVideo *>(static_cast<ISteamVideo002 *>(steam_video));
     }
     else if (strcmp(pchVersion, STEAMVIDEO_INTERFACE_VERSION) == 0) {
         return reinterpret_cast<ISteamVideo *>(static_cast<ISteamVideo *>(steam_video));

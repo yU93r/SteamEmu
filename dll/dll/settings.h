@@ -54,6 +54,11 @@ struct Mod_entry {
     int32 primaryFileSize{};
     std::string previewFileName{};
     int32 previewFileSize{};
+
+    uint64 total_files_sizes{}; // added in sdk 1.60, "Total size of all files (non-legacy), excluding the preview file"
+    std::string min_game_branch{}; // added in sdk 1.60
+    std::string max_game_branch{}; // added in sdk 1.60
+
     std::string workshopItemURL{};
 
     // voting information
@@ -167,7 +172,21 @@ struct Overlay_Appearance {
     static NotificationPosition translate_notification_position(const std::string &str);
 };
 
+struct Branch_Info {
+    std::string name{};
+    std::string description{};
+    bool branch_protected = false;
+    EBetaBranchFlags flags = EBetaBranchFlags::k_EBetaBranch_None;
+    uint32 build_id = 10; // not sure if 0 as an initial value is a good idea
+    uint32 time_updated_epoch = (uint32)std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+    
+    // may be changed by the game, I assume only 1 branch should be active
+    // added in sdk 1.60 and currently unused
+    bool active = false;
+};
+
 class Settings {
+private:
     CSteamID steam_id{}; // user id
     CGameID game_id{};
     std::string name{};
@@ -194,7 +213,6 @@ class Settings {
     std::string supported_languages{};
 
 public:
-
     //Depots
     std::vector<DepotId_t> depots{};
 
@@ -210,9 +228,6 @@ public:
     //matchmaking server list & server details
     bool matchmaking_server_list_always_lan_type = true;
     bool matchmaking_server_details_via_source_query = false;
-
-    //app build id
-    int build_id = 10;
 
     //make lobby creation fail in the matchmaking interface
     bool disable_lobby_creation = false;
@@ -256,9 +271,11 @@ public:
     // get the alpha-2 code from: https://www.iban.com/country-codes 
     std::string ip_country = "US";
 
+    // branches info
     //is playing on beta branch + current/forced branch name
     bool is_beta_branch = false;
-    std::string current_branch_name = "public";
+    long selected_branch_idx{};
+    std::vector<Branch_Info> branches{}; // in settings parser we must ensure we have the default "public" branch, force-add it if not defined by the user
 
     //controller
     struct Controller_Settings controller_settings{};

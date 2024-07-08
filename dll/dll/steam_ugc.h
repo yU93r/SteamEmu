@@ -27,6 +27,10 @@ struct UGC_query {
     bool return_all_subscribed{};
 
     std::set<PublishedFileId_t> results{};
+    
+    bool admin_query = false; // added in sdk 1.60 (currently unused)
+    std::string min_branch{}; // added in sdk 1.60 (currently unused)
+    std::string max_branch{}; // added in sdk 1.60 (currently unused)
 };
 
 class Steam_UGC :
@@ -46,6 +50,7 @@ public ISteamUGC014,
 public ISteamUGC015,
 public ISteamUGC016,
 public ISteamUGC017,
+public ISteamUGC018,
 public ISteamUGC
 {
     constexpr static const char ugc_favorits_file[] = "favorites.txt";
@@ -134,6 +139,11 @@ public:
 
     bool GetQueryUGCKeyValueTag( UGCQueryHandle_t handle, uint32 index, const char *pchKey, STEAM_OUT_STRING_COUNT(cchValueSize) char *pchValue, uint32 cchValueSize );
 
+	// Some items can specify that they have a version that is valid for a range of game versions (Steam branch)
+    uint32 GetNumSupportedGameVersions( UGCQueryHandle_t handle, uint32 index );
+
+    bool GetSupportedGameVersionData( UGCQueryHandle_t handle, uint32 index, uint32 versionIndex, STEAM_OUT_STRING_COUNT( cchGameBranchSize ) char *pchGameBranchMin, STEAM_OUT_STRING_COUNT( cchGameBranchSize ) char *pchGameBranchMax, uint32 cchGameBranchSize );
+
     uint32 GetQueryUGCContentDescriptors( UGCQueryHandle_t handle, uint32 index, EUGCContentDescriptorID *pvecDescriptors, uint32 cMaxEntries );
 
     // Release the request to free up memory, after retrieving results
@@ -166,6 +176,9 @@ public:
     bool SetLanguage( UGCQueryHandle_t handle, const char *pchLanguage );
 
     bool SetAllowCachedResponse( UGCQueryHandle_t handle, uint32 unMaxAgeSeconds );
+
+    // allow ISteamUGC to be used in a tools like environment for users who have the appropriate privileges for the calling appid
+    bool SetAdminQuery( UGCUpdateHandle_t handle, bool bAdminQuery );
 
     // Options only for querying user UGC
     bool SetCloudFileNameFilter( UGCQueryHandle_t handle, const char *pMatchCloudFileName );
@@ -260,6 +273,8 @@ public:
 
     bool RemoveContentDescriptor( UGCUpdateHandle_t handle, EUGCContentDescriptorID descid );
 
+    bool SetRequiredGameVersions( UGCUpdateHandle_t handle, const char *pszGameBranchMin, const char *pszGameBranchMax );
+    
     STEAM_CALL_RESULT( SubmitItemUpdateResult_t )
     SteamAPICall_t SubmitItemUpdate( UGCUpdateHandle_t handle, const char *pchChangeNote );
     // commit update process started with StartItemUpdate()
