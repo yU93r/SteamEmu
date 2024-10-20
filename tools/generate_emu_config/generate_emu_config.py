@@ -723,44 +723,13 @@ def main():
             time.sleep(1000)
             result = client.anonymous_login()
             trials -= 1
-    elif (len(USERNAME) == 0 or len(PASSWORD) == 0):
-        client.cli_login()
-    else:
-        result = client.login(USERNAME, password=PASSWORD)
-        auth_code, two_factor_code = None, None
-        while result in (
-            EResult.AccountLogonDenied, EResult.InvalidLoginAuthCode,
-            EResult.AccountLoginDeniedNeedTwoFactor, EResult.TwoFactorCodeMismatch,
-            EResult.TryAnotherCM, EResult.ServiceUnavailable,
-            EResult.InvalidPassword,
-            ):
-
-            if result == EResult.InvalidPassword:
-                print("invalid password, the password you set is wrong.")
-                exit(1)
-
-            elif result in (EResult.AccountLogonDenied, EResult.InvalidLoginAuthCode):
-                prompt = ("Enter email code: " if result == EResult.AccountLogonDenied else
-                            "Incorrect code. Enter email code: ")
-                auth_code, two_factor_code = input(prompt), None
-
-            elif result in (EResult.AccountLoginDeniedNeedTwoFactor, EResult.TwoFactorCodeMismatch):
-                prompt = ("Enter 2FA code: " if result == EResult.AccountLoginDeniedNeedTwoFactor else
-                            "Incorrect code. Enter 2FA code: ")
-                auth_code, two_factor_code = None, input(prompt)
-
-            elif result in (EResult.TryAnotherCM, EResult.ServiceUnavailable):
-                if prompt_for_unavailable and result == EResult.ServiceUnavailable:
-                    while True:
-                        answer = input("Steam is down. Keep retrying? [y/n]: ").lower()
-                        if answer in 'yn': break
-
-                    prompt_for_unavailable = False
-                    if answer == 'n': break
-
-                client.reconnect(maxdelay=15)
-
-            result = client.login(USERNAME, PASSWORD, None, auth_code, two_factor_code)
+    webauth = WebAuth(USERNAME, PASSWORD)
+        if (len(USERNAME) > 0 and len(PASSWORD) > 0):
+            webauth.cli_login(USERNAME, PASSWORD)
+        else:
+            webauth_prompt_username = input("Enter Steam username: ")
+            webauth.cli_login(webauth_prompt_username)
+        client.login(webauth.username, access_token=webauth.refresh_token)
 
     # read and prepend top_owners_ids.txt
     top_owners_file = os.path.join(get_exe_dir(RELATIVE_DIR), "top_owners_ids.txt")
@@ -1053,16 +1022,39 @@ def main():
             json.dump(dlc_raw, f, ensure_ascii=False, indent=2)
         
         print(f"######### done for app id {appid} #########\n\n")
+        
+def _tracebackPrint(_errorValue):
+    print("Unexpected error:")
+    print(_errorValue)
+    print("-----------------------")
+    for line in traceback.format_exception(_errorValue):
+        print(line)
+    print("-----------------------")
 
 if __name__ == "__main__":
     try:
         main()
     except Exception as e:
-        print("Unexpected error:")
-        print(e)
-        print("-----------------------")
-        for line in traceback.format_exception(e):
-            print(line)
-        print("-----------------------")
-        sys.exit(1)
+        if 'client_id' in e.args:
+            print("Wrong Steam username and / or password. Please try again!")
+            try:
+                main()
+            except Exception as e:
+                if 'client_id' in e.args:
+                    print("Wrong Steam username and / or password. Please try again!")
+                    try:
+                        main()
+                    except Exception as e:
+                        if 'client_id' in e.args:
+                            print("Wrong Steam username and / or password. Please try again!")
+                            sys.exit(1)
+                        else:
+                            _tracebackPrint(e)
+                            sys.exit(1)
+                else:
+                    _tracebackPrint(e)
+                    sys.exit(1)
+        else:
+            _tracebackPrint(e)
+            sys.exit(1)
 
