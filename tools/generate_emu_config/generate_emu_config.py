@@ -6,7 +6,6 @@ from external_components import (
 )
 from controller_config_generator import parse_controller_vdf
 from steam.client import SteamClient
-from steam.client.cdn import CDNClient
 from steam.enums import common
 from steam.enums.common import EResult
 from steam.enums.emsg import EMsg
