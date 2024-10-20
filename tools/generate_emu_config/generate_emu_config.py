@@ -724,7 +724,7 @@ def main():
             result = client.anonymous_login()
             trials -= 1
     else:
-    webauth = WebAuth(USERNAME, PASSWORD)
+        webauth = WebAuth(USERNAME, PASSWORD)
         if (len(USERNAME) > 0 and len(PASSWORD) > 0):
             webauth.cli_login(USERNAME, PASSWORD)
         else:
